@@ -25,7 +25,7 @@ return array(
 	|
 	*/
 
-	'site_name' => '<span style="color:#fff">Squire</span>App',
+	'site_name' => '<span style="color:#000">Squire</span>App',
 
 
 	/*
@@ -101,9 +101,11 @@ return array(
 	|
 	*/
 	'nav' => array(
+		/*
 		'Customers' => array(
 			'uri' => 'customers',
 		),
+		*/
 	),
 
 	// Partial view Files
