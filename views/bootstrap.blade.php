@@ -47,6 +47,7 @@
 
 		<script src="{{ URL::to_asset('js/jquery.min.js') }}"></script>
 		<script src="{{ URL::to_asset('js/bootstrap.min.js') }}"></script>
+		<script src="{{ URL::to_asset('bundles/squire/js/squire.js') }}"></script>
 
 		{{ Asset::container('footer')->scripts() }}
 
