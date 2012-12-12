@@ -82,6 +82,14 @@ hgroup .buttons li {
 .clickable, tr.ajax {
 	cursor: pointer;
 }
+tr.clickable:hover td {
+	background-color: rgb(245, 245, 245);
+}
+tr.clickable:active td,
+tr.clickable.active td {
+	background-color: rgb(145, 145, 145);
+	color: #f0f0f0;
+}
 #mini-search .noresult {
 	padding: 1em 2em 0.4em;
 }
