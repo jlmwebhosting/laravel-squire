@@ -91,13 +91,13 @@ Sq.activate_widgets = function($context) {
 	});
 
 	// Activate addon widgets
-	Sq.widgets.each(function(selector, callback)
+	$.each(Sq.widgets, function(selector, callback)
 	{
 		$(selector, $context).each(function(i, el)
 		{
 			callback($(el));
 		});
-	})
+	});
 };
 
 

@@ -9,9 +9,16 @@
 .navbar form .btn {
 	margin: 0;
 }
-.navbar .action-buttons {
+.navbar form input {
+	margin-bottom: 0;
+}
+.navbar .action-buttons,
+.navbar .nav-buttons {
 	float: right;
 	margin-right: 1em;
+}
+.navbar .nav-buttons .btn {
+	margin-top: 5px;
 }
 
 .nav .dropdown-menu {
