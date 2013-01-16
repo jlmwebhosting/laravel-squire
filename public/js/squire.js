@@ -66,7 +66,7 @@ Sq.activate_widgets = function($context) {
 	$('input[data-autocomplete]', $context).autocomplete({
 		source: $(this).data('autocomplete-uri')
 	});
-
+/*
 	$('.datepicker', $context).each(function(i, el)
 	{
 		var $field = $(el);
@@ -89,7 +89,7 @@ Sq.activate_widgets = function($context) {
 			$field.datepicker('setDate', options.initialValue);
 		}
 	});
-
+*/
 	// Activate addon widgets
 	$.each(Sq.widgets, function(selector, callback)
 	{
