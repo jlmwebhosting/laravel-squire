@@ -24,10 +24,11 @@ class Response extends \Laravel\Response {
 		}
 
 		// @todo: Send error status code here
-		if ( ! empty($this->layout))
-		{
-			$this->layout->page_heading = 'Error '.$status;
-			$this->layout->content = '<code>'.var_export($data, true).'</code>';
-		}
+		$view = \View::make('layout.bootstrap')
+			->with('title', 'Error '.$status);
+
+		\Section::append('content', '<p class="alert alert-error">'.$data['message'].'</p>');
+
+		return $view;
 	}
 }
