@@ -18,6 +18,29 @@ function empty(v)
 	return false;
 }
 
+// Avoid `console` errors in browsers that lack a console.
+(function() {
+    var method;
+    var noop = function noop() {};
+    var methods = [
+        'assert', 'clear', 'count', 'debug', 'dir', 'dirxml', 'error',
+        'exception', 'group', 'groupCollapsed', 'groupEnd', 'info', 'log',
+        'markTimeline', 'profile', 'profileEnd', 'table', 'time', 'timeEnd',
+        'timeStamp', 'trace', 'warn'
+    ];
+    var length = methods.length;
+    var console = (window.console = window.console || {});
+
+    while (length--) {
+        method = methods[length];
+
+        // Only stub undefined methods.
+        if (!console[method]) {
+            console[method] = noop;
+        }
+    }
+}());
+
 /**
  * When Squi_Form attaches array data to a field, it encodes it
  * as faux json, with double-quotes converted to single so as to
@@ -145,6 +168,7 @@ Sq.alert = function(type, message, $context, append) {
  */
 Sq.reload_panel = function(panel_id, data, callback) {
 	var $panel = $('#'+panel_id);
+	console.log('reload_panel', $panel);
 	if ( ! $panel.data('uri')) {
 		return false;
 	}
@@ -222,7 +246,13 @@ Sq.ajax_submit = function($form, $context, options) {
 
 			// Reload a panel, maybe?
 			if (typeof data.reload_panel !== 'undefined' && data.reload_panel.length) {
-				Sq.reload_panel(data.reload_panel);
+				// Cast the value as an array
+				if (typeof data.reload_panel != 'object') {
+					data.reload_panel = [data.reload_panel];
+				}
+				$.each(data.reload_panel, function(i, panel) {
+					Sq.reload_panel(panel);
+				});
 			}
 			
 			// Redirect to another page?
@@ -440,6 +470,7 @@ $(function() {
 	});
 
 	// Clickable table rows
+	//$(document).on('click', 'tr[data-uri].clickable', function(e){
 	$('tr[data-uri].clickable').live('click', function(e){
 		e.preventDefault();
 		var uri = $(this).data('uri');
@@ -453,6 +484,7 @@ $(function() {
 	});
 
 	// Modal links
+	//$(document).on('click', '.ajax', function(e){
 	$('.ajax').live('click', function(e){
 		var url = (typeof this.href === 'undefined')
 			? Sq.site_url($(this).data('uri'))
@@ -465,6 +497,7 @@ $(function() {
 	});
 
 	// Trigger form submission when user clicks primary dialog button
+	//$(document).on('click', '.form-modal .btn-primary', function(e)
 	$('.form-modal .btn-primary').live('click', function(e)
 	{
 		console.log('modal save clicked');
@@ -473,123 +506,8 @@ $(function() {
 		return false;
 	});
 	
-	// Ajax comment submission
-	// @todo: this is actually part of the CRM bundle, and shouldn't be in the core
-	$('#entity_comment_form').submit(function(e)
-	{
-		var $form = $(this);
-		Sq.ajax_submit($form);
-		return false;
-	});
 
 	// Activate any widgets on this page
 	Sq.activate_widgets();
 
-	/**
-	 * Mini Search
-	 * In lieu of a good jQuery plugin for this, I'm manually handling keyboard navigation
-	 * for the mini search box. This involves some delicate heirarchical traversal and event
-	 * management, and as such scares the crap out of me.
-	 * @todo: Should be replaced by a tested solution.
-	 */
-	var $searchForm = $('#mini-search'),
-		$resultBox = $('#search-results');
-
-	$searchForm.submit(function(e)
-	{
-		if ( ! $('#mini-search-field').val().length)
-		{
-			return false;
-		}
-		
-		$.getJSON($searchForm.attr('action'), $searchForm.serialize(), function(data) {
-			$resultBox.empty();
-			
-			$.each(data, function(key, set) {
-				var $list = $('<ul class="result-set"></ul>').appendTo($resultBox);
-				$('<li class="heading"></li>')
-					.append('<a href="'+Sq.site_url(set.index_uri)+'">'+set.label+'</a></li>')
-					.appendTo($list);
-				$.each(set.results, function(key, result) {
-					var $item = $('<li></li>')
-						.append('<p class="title">'+result.label+'</p>')
-						.appendTo($list);
-					if (result.context) {
-						$item.append('<p class="context">'+result.context+'</p>');
-					}
-					$item.wrapInner('<a href="'+Sq.site_url(result.uri)+'"></a>');
-				});
-			});
-
-			if ( ! $resultBox.children().length) {
-				$resultBox.append('<p class="noresult">No results found</p>');
-			}
-
-			$resultBox.slideDown();
-		});
-		return false;
-	});
-
-	$('#mini-search-field').keydown(function(e)
-	{
-		var code = (e.keyCode ? e.keyCode : e.which);
-
-		// Down arrow
-		if (code === 40) {
-			e.stopPropagation();
-			if ($resultBox.children().length) {
-				$resultBox.find('li:not(.heading):first a').focus();
-			}
-			return false;
-		}
-	}).blur(function(e)
-	{
-		setTimeout(function()
-		{
-			if ( ! $searchForm.find('a:focus').length) {
-				$resultBox.slideUp();
-			}
-		}, 300);
-	});
-
-	$('li a', $resultBox).live('keydown', function(e)
-	{
-		var code = (e.keyCode ? e.keyCode : e.which);
-		var $a = $(e.target);
-
-		// Up arrow
-		if (code === 38) {
-			e.stopPropagation();
-			var $prev = $a.parent().prevAll(':not(.heading):first').find('a:first');
-			if ( ! $prev.length) {
-				$prev = $a.parent().parent().prevAll(':not(.heading):first').find('a:first');
-				if ( ! $prev.length) { return false; }
-			}
-
-			$prev.focus();
-			return false;
-		}
-
-		// Down arrow
-		if (code === 40) {
-			e.stopPropagation();
-			var $next = $a.parent().nextAll(':not(.heading):first').find('a:first');
-			if ( ! $next.length) {
-				$next = $a.parent().parent().nextAll(':not(.heading):first').find('a:first');
-				if ( ! $next.length) { return false; }
-			}
-
-			$next.focus();
-			return false;
-		}
-
-	}).live('blur', function(e)
-	{
-		setTimeout(function()
-		{
-			if ( ! $searchForm.find('a:focus').length) {
-				$resultBox.slideUp();
-			}
-		}, 300);
-	});
 });
