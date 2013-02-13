@@ -89,30 +89,7 @@ Sq.activate_widgets = function($context) {
 	$('input[data-autocomplete]', $context).autocomplete({
 		source: $(this).data('autocomplete-uri')
 	});
-/*
-	$('.datepicker', $context).each(function(i, el)
-	{
-		var $field = $(el);
-		var date = $field.val() ? new Date($field.val()) : new Date();
 
-		var options = {
-			dateFormat: 'd-M-yy',
-			initialValue: date
-		};
-
-		var opt = Sq.parse_fson($field.data('datepicker'));
-
-		if (typeof opt === 'object') {
-			$.extend(options, opt);
-		}
-
-		$field.datepicker(options);
-
-		if (options.initialValue) {
-			$field.datepicker('setDate', options.initialValue);
-		}
-	});
-*/
 	// Activate addon widgets
 	$.each(Sq.widgets, function(selector, callback)
 	{
@@ -476,16 +453,17 @@ $(function() {
 		var uri = $(this).data('uri');
 		if ($(this).is('.ajax'))
 		{
-			return Sq.modal({
+			Sq.modal({
 				url: Sq.site_url(uri)
 			});
+			return false;
 		}
 		window.location = Sq.site_url(uri);
 	});
 
 	// Modal links
 	//$(document).on('click', '.ajax', function(e){
-	$('.ajax').live('click', function(e){
+	$('.ajax:not(tr)').live('click', function(e){
 		var url = (typeof this.href === 'undefined')
 			? Sq.site_url($(this).data('uri'))
 			: this.href;
