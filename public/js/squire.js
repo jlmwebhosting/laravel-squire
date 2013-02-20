@@ -66,30 +66,6 @@ Sq.activate_widgets = function($context) {
 		$context = document.body;
 	}
 
-	$('input[data-datetime]', $context).each(function(i, el)
-	{
-		var $field = $(el);
-
-		var options = {
-			dateFormat: 'yy-mm-dd',
-			timeFormat: 'h:mm tt',
-			ampm: true,
-			initialValue: new Date()
-		};
-		
-		var opt = Sq.parse_fson($field.data('datetime'));
-
-		if (typeof opt === 'object') {
-			$.extend(options, opt);
-		}
-
-		$field.datetimepicker(options).datetimepicker('setDate', options.initialValue);
-	});
-
-	$('input[data-autocomplete]', $context).autocomplete({
-		source: $(this).data('autocomplete-uri')
-	});
-
 	// Activate addon widgets
 	$.each(Sq.widgets, function(selector, callback)
 	{
@@ -448,7 +424,7 @@ $(function() {
 
 	// Clickable table rows
 	//$(document).on('click', 'tr[data-uri].clickable', function(e){
-	$('tr[data-uri].clickable').live('click', function(e){
+	$('[data-uri].clickable').live('click', function(e){
 		e.preventDefault();
 		var uri = $(this).data('uri');
 		if ($(this).is('.ajax'))
@@ -463,7 +439,7 @@ $(function() {
 
 	// Modal links
 	//$(document).on('click', '.ajax', function(e){
-	$('.ajax:not(tr)').live('click', function(e){
+	$('.ajax:not(tr, form)').live('click', function(e){
 		var url = (typeof this.href === 'undefined')
 			? Sq.site_url($(this).data('uri'))
 			: this.href;
