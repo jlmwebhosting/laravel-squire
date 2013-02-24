@@ -41,6 +41,23 @@ function empty(v)
     }
 }());
 
+Sq.listen = function(event, callback)
+{
+	if (typeof Sq.eventListeners[event] !== 'object') {
+		Sq.eventListeners[event] = [];
+	}
+	Sq.eventListeners[event].push(callback);
+}
+
+Sq.trigger = function(event, data)
+{
+	console.log('Sq.trigger', event, data);
+	if (typeof Sq.eventListeners[event] !== 'object') return;
+	for (var i in Sq.eventListeners[event]) {
+		Sq.eventListeners[event][i](data);
+	}
+}
+
 /**
  * When Squi_Form attaches array data to a field, it encodes it
  * as faux json, with double-quotes converted to single so as to
@@ -65,6 +82,10 @@ Sq.activate_widgets = function($context) {
 	if (typeof $context === 'undefined') {
 		$context = document.body;
 	}
+
+	Sq.trigger('activate_widgets', {
+		'context': $context
+	})
 
 	// Activate addon widgets
 	$.each(Sq.widgets, function(selector, callback)
@@ -92,6 +113,13 @@ Sq.alert = function(type, message, $context, append) {
 			$context = $('body > .fluid-container');
 		}
 	}
+
+	Sq.trigger('alert', {
+		'context': $context,
+		'type': type,
+		'message': message,
+		'append': append
+	});
 
 	// Needs to be in a function due to the multiple scenarios below
 	var add_alerts = function()
@@ -121,10 +149,18 @@ Sq.alert = function(type, message, $context, append) {
  */
 Sq.reload_panel = function(panel_id, data, callback) {
 	var $panel = $('#'+panel_id);
-	console.log('reload_panel', $panel);
+
 	if ( ! $panel.data('uri')) {
 		return false;
 	}
+
+	Sq.trigger('reload_panel', {
+		'panel': $panel,
+		'uri': $panel.data('uri'),
+		'data': data,
+		'callback': callback
+	});
+
 	$.ajax({
 		type: 'get',
 		headers: {
@@ -163,12 +199,15 @@ Sq.ajax_submit = function($form, $context, options) {
 	}
 	
 	var opt = {
+		form: $form,
 		context: $_context,
 		load: function(e) {},
 		success: function(data) {},
 		error: function(jqXHR, textStatus) {}
 	};
 	$.extend(opt, options);
+
+	Sq.trigger('ajax_submit', opt);
 
 	$.ajax({
 		url: $form.attr('action'),
@@ -177,6 +216,13 @@ Sq.ajax_submit = function($form, $context, options) {
 		success: function(data){
 			// Call the user-defined event
 			opt.success(data);
+
+			// Sq events
+			if (typeof data.events === 'object') {
+				for (var i in data.events) {
+					Sq.trigger(data.events[i], data);
+				}
+			}
 
 			// Close the modal window
 			if (typeof opt.context !== 'undefined' && opt.context.is('.modal')) {
@@ -369,6 +415,8 @@ Sq.modal = function(options)
 	};
 	$.extend(opt, options);
 
+	Sq.trigger('modal', opt);
+
 	$.ajax({
 		url: options.url,
 		type: 'GET',
@@ -454,9 +502,11 @@ $(function() {
 	//$(document).on('click', '.form-modal .btn-primary', function(e)
 	$('.form-modal .btn-primary').live('click', function(e)
 	{
-		console.log('modal save clicked');
+		var $dialog = $(this).parents('.form-modal');
+		Sq.trigger('dialog_save_clicked', { dialog: $dialog });
+
 		// Submit the form contained in the modal
-		$(this).parents('.form-modal').find('form:first').submit();
+		$dialog.find('form:first').submit();
 		return false;
 	});
 	
