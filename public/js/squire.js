@@ -305,11 +305,8 @@ Sq.prepare_modal = function($modal, options) {
 		error: function(response) {}
 	};
 	$.extend(opt, options);
-
-	$($modal).on('shown', function()
-	{
-		$('input[type!=hidden]:first', $modal).focus();
-	});
+	
+	$($modal).find('input[type!=hidden]:first').focus();
 
 	// Run addon hooks
 	for (var i in Sq.dialog_callbacks)
