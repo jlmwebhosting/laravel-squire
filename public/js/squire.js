@@ -51,7 +51,6 @@ Sq.listen = function(event, callback)
 
 Sq.trigger = function(event, data)
 {
-	console.log('Sq.trigger', event, data);
 	if (typeof Sq.eventListeners[event] !== 'object') return;
 	for (var i in Sq.eventListeners[event]) {
 		Sq.eventListeners[event][i](data);
@@ -148,7 +147,12 @@ Sq.alert = function(type, message, $context, append) {
  * specified in the data-uri attribute.
  */
 Sq.reload_panel = function(panel_id, data, callback) {
-	var $panel = $('#'+panel_id);
+	if (panel_id.jquery) {
+		var $panel = panel_id;
+		panel_id = $panel.attr('id');
+	} else {
+		var $panel = $('#'+panel_id);
+	}
 
 	if ( ! $panel.data('uri')) {
 		return false;
@@ -171,7 +175,9 @@ Sq.reload_panel = function(panel_id, data, callback) {
 		url: Sq.site_url($panel.data('uri')),
 		success: function(data){
 			$panel.replaceWith(data);
-			if (typeof callback === 'function') callback($('#'+panel_id));
+			var $newPanel = $('#'+panel_id);
+			if (typeof callback === 'function') callback($newPanel);
+			Sq.activate_widgets($newPanel);
 		}
 	});
 };
