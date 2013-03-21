@@ -474,8 +474,7 @@ $(function() {
 	});
 
 	// Clickable table rows
-	//$(document).on('click', 'tr[data-uri].clickable', function(e){
-	$('[data-uri].clickable').live('click', function(e){
+	$(document).on('click', 'tr[data-uri].clickable', function(e){
 		e.preventDefault();
 		var uri = $(this).data('uri');
 		if ($(this).is('.ajax'))
@@ -489,8 +488,7 @@ $(function() {
 	});
 
 	// Modal links
-	//$(document).on('click', '.ajax', function(e){
-	$('.ajax:not(tr, form)').live('click', function(e){
+	$(document).on('click', '.ajax', function(e){
 		var url = (typeof this.href === 'undefined')
 			? Sq.site_url($(this).data('uri'))
 			: this.href;
@@ -502,8 +500,7 @@ $(function() {
 	});
 
 	// Trigger form submission when user clicks primary dialog button
-	//$(document).on('click', '.form-modal .btn-primary', function(e)
-	$('.form-modal .btn-primary').live('click', function(e)
+	$(document).on('click', '.form-modal .btn-primary', function(e)
 	{
 		var $dialog = $(this).parents('.form-modal');
 		Sq.trigger('dialog_save_clicked', { dialog: $dialog });
