@@ -462,6 +462,19 @@ Sq.modal = function(options)
 	});
 };
 
+Sq.unsavedChanges = [];
+Sq.addUnsavedChange = function(item) {
+	if (Sq.unsavedChanges.indexOf(item) < 0) {
+		Sq.unsavedChanges.push(item);
+	}
+};
+Sq.removeUnsavedChange = function(item) {
+	var i = Sq.unsavedChanges.indexOf(item);
+	if (i >= 0) {
+		Sq.unsavedChanges.splice(i, 1);
+	}
+};
+
 /**
  * On page ready, make all the magic happen
  */
@@ -509,6 +522,15 @@ $(function() {
 		$dialog.find('form:first').submit();
 		return false;
 	});
+
+	// Confirm before leaving page with unsaved changes
+	window.onbeforeunload = confirmExit;
+	function confirmExit()
+	{
+		if ( ! Sq.unsavedChanges.length) return;
+		return "There are unsaved changes on this page. Leaving this page will discard any unsaved changes.";
+	}
+
 	
 
 	// Activate any widgets on this page
