@@ -13,22 +13,14 @@ class Response extends \Laravel\Response {
 		is_string($data) && $data = array('message' => $data);
 		$data['error'] = true;
 
-		if (Request::ajax())
-		{
+		if (Request::ajax()) {
 			return parent::json($data, $status);
 		}
 
-		if ($status == 404)
-		{
+		if ($status == 404) {
 			return parent::error($status, $data);
 		}
 
-		// @todo: Send error status code here
-		$view = \View::make('layout.bootstrap')
-			->with('title', 'Error '.$status);
-
-		\Section::append('content', '<p class="alert alert-error">'.$data['message'].'</p>');
-
-		return $view;
+		return Event::first('response.error', [$status, $data]);
 	}
 }

@@ -474,7 +474,7 @@ $(function() {
 	});
 
 	// Clickable table rows
-	$(document).on('click', 'tr[data-uri].clickable', function(e){
+	$(document).on('click', '.clickable:not(.ajax)', function(e){
 		e.preventDefault();
 		var uri = $(this).data('uri');
 		if ($(this).is('.ajax'))
