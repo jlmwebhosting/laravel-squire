@@ -178,6 +178,7 @@ Sq.reload_panel = function(panel_id, data, callback) {
 			var $newPanel = $('#'+panel_id);
 			if (typeof callback === 'function') callback($newPanel);
 			Sq.activate_widgets($newPanel);
+			Sq.trigger('partial.loaded', $newPanel);
 		}
 	});
 };
