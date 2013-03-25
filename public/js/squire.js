@@ -221,6 +221,12 @@ Sq.ajax_submit = function($form, $context, options) {
 		type: $form.attr('method'),
 		data: $form.serialize(),
 		success: function(data){
+			// Trigger event
+			Sq.trigger('form.success', {
+				form: $form,
+				data: data
+			});
+
 			// Call the user-defined event
 			opt.success(data);
 
@@ -277,6 +283,12 @@ Sq.ajax_submit = function($form, $context, options) {
 				opt.error(xhr, status);
 				return;
 			}
+
+			// Trigger event
+			Sq.trigger('form.error', {
+				form: $form,
+				data: response
+			});
 
 			// Call the user-defined event
 			opt.error(response);
