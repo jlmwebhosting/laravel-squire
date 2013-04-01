@@ -21,6 +21,6 @@ class Response extends \Laravel\Response {
 			return parent::error($status, $data);
 		}
 
-		return Event::first('response.error', [$status, $data]);
+		return \Event::first('response.error', [$status, $data]);
 	}
 }
