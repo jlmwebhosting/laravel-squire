@@ -46,7 +46,16 @@ Sq.listen = function(event, callback)
 	if (typeof Sq.eventListeners[event] !== 'object') {
 		Sq.eventListeners[event] = [];
 	}
-	Sq.eventListeners[event].push(callback);
+
+	var ev = Sq.eventListeners[event];
+	ev.push(callback);
+
+	/* return a deregistration function
+	 * for the event handler */
+	return function() {
+		var index = ev.indexOf(callback);
+		ev.splice(index,1);
+	};
 }
 
 Sq.trigger = function(event, data)
