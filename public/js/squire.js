@@ -522,6 +522,7 @@ $(function() {
 		Sq.modal({
 			url: url
 		});
+		
 		return false;
 	});
 
@@ -530,6 +531,9 @@ $(function() {
 	{
 		var $dialog = $(this).parents('.form-modal');
 		Sq.trigger('dialog_save_clicked', { dialog: $dialog });
+
+		var $buttons = $dialog.find('.modal-footer .btn');
+		$buttons.attr('disabled', 'disabled');
 
 		// Submit the form contained in the modal
 		$dialog.find('form:first').submit();
