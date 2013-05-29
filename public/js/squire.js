@@ -338,7 +338,7 @@ Sq.prepare_modal = function($modal, options) {
 
 	Sq.activate_widgets($modal);
 
-	var $form = $modal.find('form:first');
+	var $form = $modal.find('form:first:not(.manual)');
 	var val = {};
 	$form.find('input, textarea, select').each(function(){
 		var rules = $(this).data('validation');
