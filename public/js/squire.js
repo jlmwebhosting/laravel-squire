@@ -334,7 +334,15 @@ Sq.prepare_modal = function($modal, options) {
 	};
 	$.extend(opt, options);
 	
-	$($modal).find('input[type!=hidden]:first').focus();
+	// We can indicate which form element to
+	// focus using .focus, otherwise, we use
+	// the first form element
+
+	if($modal.find('.focus').length) {
+		$modal.find('.focus').focus();
+	}	else {
+		$modal.find('input[type!=hidden]:first').focus();
+	}
 
 	// Run addon hooks
 	for (var i in Sq.dialog_callbacks)
