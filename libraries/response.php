@@ -13,7 +13,7 @@ class Response extends \Laravel\Response {
 		is_string($data) && $data = array('message' => $data);
 		$data['error'] = true;
 
-		if (Request::ajax()) {
+		if (Request::ajax() || Request::accepts('application/json')) {
 			return parent::json($data, $status);
 		}
 
